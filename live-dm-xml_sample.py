@@ -1,12 +1,16 @@
-# -*- coding: utf-8 -*-
-
 import asyncio
+import os,time
 
 import blivedm
 
 
-class MyBLiveClient(blivedm.BLiveClient):
-    # 演示如何自定义handler
+class BLiveXMLlogger(blivedm.BLiveClient):
+    def __init__(self, room_id, uid=0, heartbeat_interval=30, ssl=True, loop=None, savefile=None, inittime=int(time.time())):
+        super().__init__(room_id, uid=uid, heartbeat_interval=heartbeat_interval, ssl=ssl, loop=loop)
+        self.file = savefile
+        self.inittime = inittime
+
+
     _COMMAND_HANDLERS = blivedm.BLiveClient._COMMAND_HANDLERS.copy()
 
     async def __on_vip_enter(self, command):
@@ -18,6 +22,8 @@ class MyBLiveClient(blivedm.BLiveClient):
 
     async def _on_receive_danmaku(self, danmaku: blivedm.DanmakuMessage):
         print(f'{danmaku.uname}：{danmaku.msg}')
+        curtime = int(time.time())
+        self.file.write(f'<d p="{curtime-self.inittime},{danmaku.mode},{danmaku.font_size},{danmaku.color},{curtime},0,{danmaku.uid},0">{danmaku.msg}</d>')
 
     async def _on_receive_gift(self, gift: blivedm.GiftMessage):
         print(f'{gift.uname} 赠送{gift.gift_name}x{gift.num} （{gift.coin_type}币x{gift.total_coin}）')
@@ -30,19 +36,19 @@ class MyBLiveClient(blivedm.BLiveClient):
 
 
 async def main():
-    # 参数1是直播间ID
-    # 如果SSL验证失败就把ssl设为False
-    client = MyBLiveClient(12235923, ssl=True)
+    filename = "12235923.xml"
+    saving_path = "livelogs"
+    xmlheader = '''<?xml version="1.0" encoding="UTF-8"?><i><chatserver>chat.bilibili.com</chatserver><chatid>219333260</chatid><mission>0</mission><maxlimit>8000</maxlimit><state>0</state><real_name>0</real_name><source>k-v</source>'''
+    xmltail = '''</i>'''
+    f = open(os.path.join(saving_path, filename),'w')
+    client = BLiveXMLlogger(12235923, ssl=True, savefile=f)
     future = client.start()
+    f.write(xmlheader)
     try:
-        # 5秒后停止，测试用
-        # await asyncio.sleep(5)
-        # future = client.stop()
-        # 或者
-        # future.cancel()
-
         await future
     finally:
+        f.write(xmltail)
+        f.close()
         await client.close()
 
 
