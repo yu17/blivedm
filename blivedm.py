@@ -324,7 +324,7 @@ class BLiveClient:
         'INTERACT_WORD', 'ROOM_BANNER', 'ROOM_REAL_TIME_MESSAGE_UPDATE', 'NOTICE_MSG', 'COMBO_SEND',
         'COMBO_END', 'ENTRY_EFFECT', 'WELCOME_GUARD', 'WELCOME', 'ROOM_RANK', 'ACTIVITY_BANNER_UPDATE_V2',
         'PANEL', 'SUPER_CHAT_MESSAGE_JPN', 'USER_TOAST_MSG', 'ROOM_BLOCK_MSG', 'LIVE', 'PREPARING',
-        'room_admin_entrance', 'ROOM_ADMINS', 'ROOM_CHANGE'
+        'room_admin_entrance', 'ROOM_ADMINS', 'ROOM_CHANGE', 'ONLINERANK'
     ):
         _COMMAND_HANDLERS[cmd] = None
     del cmd
