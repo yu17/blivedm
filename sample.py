@@ -32,7 +32,12 @@ class MyBLiveClient(blivedm.BLiveClient):
 async def main():
     # 参数1是直播间ID
     # 如果SSL验证失败就把ssl设为False
+<<<<<<< HEAD
     client = MyBLiveClient(12235923, ssl=True)
+=======
+    room_id = 14917277
+    client = MyBLiveClient(room_id, ssl=True)
+>>>>>>> 4669b2c1c9a1654db340d02ff16c9f88be661d9f
     future = client.start()
     try:
         # 5秒后停止，测试用
