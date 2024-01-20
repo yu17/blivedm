@@ -1,6 +1,5 @@
 # blivedm
 
-<<<<<<< HEAD
 Forked from [xfgryujk/blivedm](https://github.com/xfgryujk/blivedm).
 
 Added `blivedm_xml_logger`, which records the live danmakus and writes them to a file in the bilibili danmaku xml format. Used in [yu17/bilibili-live-recorder](https://github.com/yu17/bilibili-live-recorder) to record live danmakus together with the live stream.
@@ -11,18 +10,10 @@ Added `blivedm_xml_logger`, which records the live danmakus and writes them to a
 
 将来可能会考虑fork一下danmaku2ass，更好地支持SC和礼物。
 
-<br>
-
-<br>
-
 ### `readme.md` from the original repo:
 
-<br>
-
 获取bilibili直播弹幕，使用websocket协议
-=======
 python3获取bilibili直播弹幕，使用websocket协议
->>>>>>> 4669b2c1c9a1654db340d02ff16c9f88be661d9f
 
 [协议解释](https://blog.csdn.net/xfgryujk/article/details/80306776)（有点过时了，总体是没错的）
 
