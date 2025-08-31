@@ -60,6 +60,8 @@ class OpenLiveClient(ws_base.WebSocketClientBase):
         # 在调用init_room后初始化的字段
         self._room_owner_uid: Optional[int] = None
         """主播用户ID"""
+        self._room_owner_open_id: Optional[str] = None
+        """主播Open ID"""
         self._host_server_url_list: Optional[List[str]] = []
         """弹幕服务器URL列表"""
         self._auth_body: Optional[str] = None
@@ -77,6 +79,13 @@ class OpenLiveClient(ws_base.WebSocketClientBase):
         主播用户ID，调用init_room后初始化
         """
         return self._room_owner_uid
+
+    @property
+    def room_owner_open_id(self) -> Optional[str]:
+        """
+        主播Open ID，调用init_room后初始化
+        """
+        return self._room_owner_open_id
 
     @property
     def room_owner_auth_code(self):
@@ -181,6 +190,7 @@ class OpenLiveClient(ws_base.WebSocketClientBase):
         anchor_info = data['anchor_info']
         self._room_id = anchor_info['room_id']
         self._room_owner_uid = anchor_info['uid']
+        self._room_owner_open_id = anchor_info['open_id']
         return True
 
     async def _end_game(self):
@@ -281,3 +291,16 @@ class OpenLiveClient(ws_base.WebSocketClientBase):
         发送认证包
         """
         await self._websocket.send_bytes(self._make_packet(self._auth_body, ws_base.Operation.AUTH))
+
+    def _handle_command(self, command: dict):
+        cmd = command.get('cmd', '')
+        if cmd == 'LIVE_OPEN_PLATFORM_INTERACTION_END' and command['data']['game_id'] == self._game_id:
+            # 服务器主动停止推送，可能是心跳超时，需要重新开启项目
+            logger.warning('room=%d game end by server, game_id=%s', self._room_id, self._game_id)
+
+            self._need_init_room = True
+            if self._websocket is not None and not self._websocket.closed:
+                asyncio.create_task(self._websocket.close())
+            return
+
+        super()._handle_command(command)
